@@ -160,7 +160,8 @@ public class GrowRateReader {
 		
 		// if ( !useStructure ) EditActivityReader.main( args );
 		
-		String dout = "data.out"; 
+		String dout = "/Users/kamir/Documents/DATA/wikipedia.growth/data.out"; 
+		String dataIN = "/Users/kamir/Documents/DATA/wikipedia.growth/data.in";
 		
 		int from = YEAR_TS_FROM;
 		int to = YEAR_TS_TO;
@@ -190,7 +191,7 @@ public class GrowRateReader {
 		
 		
 		
-		fIN = new File( "data.in/" + lang + "_wiki_" + type + ".csv" );
+		fIN = new File( dataIN + "/" + lang + "_wiki_" + type + ".csv" );
 		brIN = new BufferedReader( new FileReader( fIN ) );
 		
 		fOUT1 = new File(dout+"/" + lang + "-" + type + "_wiki.process.dat" );
