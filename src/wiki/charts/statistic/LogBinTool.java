@@ -59,7 +59,7 @@ public class LogBinTool {
 	}
 
 	public void createTable() throws IOException {
-		initBins( maxx, maxy, 1.5, LogBinTool.normalize );
+		initBins( maxx, maxy, 1.5, false );
 	}
 	
 	public void createTableDISTR() throws IOException {
@@ -70,6 +70,7 @@ public class LogBinTool {
 	
 	
 	double[][] dataF = null;
+	double[][] dataF2 = null;
     double[][] dataB = null;
     
     static double[] widthOfBin = null;
@@ -120,6 +121,7 @@ public class LogBinTool {
         double lastBorder = 0;
         
         dataF = new double[c][zz];
+        dataF2 = new double[c][zz];
         dataB = new double[c][zz];
         
         double[] tN = new double[zz];
@@ -140,6 +142,7 @@ public class LogBinTool {
             
             for (int j = 0; j < zz; j++) {
                 dataF[i][j] = 0.0;
+                dataF2[i][j] = 0.0;
                 dataB[i][j] = 0.0;
             }
         }
@@ -168,7 +171,7 @@ public class LogBinTool {
         	
         	String lineA =  "\n (" + line + ") >>> " + key;
         	String lineB =  "B:: ";
-        	String lineC =  "C:: ";
+        	String lineC =  "WRONG C:: ";
                 	
         	head = head + "\t" + key;
         	
@@ -180,9 +183,10 @@ public class LogBinTool {
         	
         	for (int i = 0; i < c; i++) {
         		dataF[i][line] = dataB[i][line] / widthOfBin[i]; 
-        		tn = tn + dataB[i][line];
-        		lineB = lineB + " " + df.format( dataF[i][line] );
-        		lineC = lineC + " " + df.format( dataF[i][line] / tn  );
+        		dataF2[i][line] = dataB[i][line]; 
+           		tn = tn + dataB[i][line];
+        		//lineB = lineB + " " + df.format( dataF[i][line] );
+        		//lineC = lineC + " " + df.format( dataF[i][line] / tn  );
         	}
 
         	tN[line] = tn;
@@ -208,11 +212,12 @@ public class LogBinTool {
     		bw.write( df.format( midOfBin[i]) + "\t" );
         	for( int j = 0; j < hash.size() ; j++ ) {
         		double v = dataF[i][j];
+        		double v2 = dataF2[i][j];
         		
-        		if ( normalize ) v = v / tN[j];
-        		if ( logAxis && v!= 0.0 ) v = Math.log( v );
+        		if ( normalize ) v2 = v2 / ( tN[j] * widthOfBin[i] );
+        		if ( logAxis && v!= 0.0 ) v2 = Math.log( v );
         		
-        		bw.write(  df.format( v ) + "\t"  );
+        		bw.write(  df.format( v2 ) + "\t"  );
         	}
     		bw.write( "\n"  );
         }	
@@ -222,7 +227,7 @@ public class LogBinTool {
     }
     
     public static boolean logAxis = false;
-    public static boolean normalize = true;
+    public static boolean normalize = false;
     
     public File file = new File( "./data.out/out.csv" );
     

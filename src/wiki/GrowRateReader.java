@@ -112,22 +112,22 @@ public class GrowRateReader {
 	 */
 	public static void main(String[] args) throws IOException, ParseException {
 
-		useStructure = false; 
+		useStructure = true; 
 				meassureDiameter = false;   // calc the diameter of the graph
 				storeNetworks = false;    
 				net_strore_type = TYPE_PAJEK;  
-				LogBinTool.logAxis = true;
+				LogBinTool.logAxis = false;
 		
 		long tT0 = System.currentTimeMillis();
 		
-	    run( 52 , args );   // de
+// 	    run( 52 , args );   // de
 //		run( 60 , args );   // en
 //	    run( 68 , args );   // fi      
 //		run( 88 , args );   // he      
 //		run( 109 , args );  // ja
 //	  	run( 122 , args );  // ko  
 //	  	run( 166 , args );  // nl  
-//		run( 222 , args );  // sv
+  	run( 222 , args );  // sv
 //							
 		String rt = (System.currentTimeMillis() - tT0)/1000 +" s";
 		
@@ -166,8 +166,8 @@ public class GrowRateReader {
 		int from = YEAR_TS_FROM;
 		int to = YEAR_TS_TO;
 		
-		// lbtHIST = new LogBinTool();
-		// lbtHIST.file = new File( dout+"/networks/"+ lang + "/" + lang + "_degree_hist_over_time_" + from + "_" + to + ".csv");
+		lbtHIST = new LogBinTool();
+		lbtHIST.file = new File( dout+"/networks/"+ lang + "/" + lang + "_degree_hist_over_time_" + from + "_" + to + ".csv");
 		
 		lbtDISTR = new LogBinTool();
 		lbtDISTR.file = new File( dout+"/networks/"+ lang + "/" + lang + "_degree_distr_over_time_" + from + "_" + to + ".csv");
@@ -240,8 +240,9 @@ public class GrowRateReader {
 		if ( useStructure ) lbtDISTR.initBinning( lang, lang + "_DISTR" );
 		if ( useStructure ) lbtDISTR.createTable();
 
-		// lbtHIST.initBinning(lang + "_HIST");
-		// lbtHIST.createTableDISTR();
+		lbtHIST.normalize = false;
+		lbtHIST.initBinning(lang, lang + "_HIST");
+		lbtHIST.createTable();
 
 		
 		/**
@@ -366,7 +367,7 @@ public class GrowRateReader {
 				if ( current_year2 >= YEAR_TS_FROM && current_year2 <= YEAR_TS_TO ) {
 	 				
 					storeDegreeDistribution( ig, cal ); 	
-	 				// storeDegreeHistogram( ig, cal );
+	 				storeDegreeHistogram( ig, cal );
 	 				
 	 				if ( storeNetworks ) storeNetwork( ig, cal );
 	 				if ( meassureDiameter) structDAT = getStructureData( ig ); 
@@ -450,69 +451,69 @@ public class GrowRateReader {
 		
 	}
 
-	// static LogBinTool lbtHIST = new LogBinTool();
+	static LogBinTool lbtHIST = new LogBinTool();
 	static LogBinTool lbtDISTR = new LogBinTool();
 
-//	/**
-//	 * Just the DegreeHistogramm, no division by total number ...
-//	 * 
-//	 * @param ig2
-//	 * @param cal
-//	 * @throws IOException
-//	 */
-//	private static void storeDegreeHistogram(Graph<String, String> ig2, GregorianCalendar cal) throws IOException {
-//		
-//		File degrFile = new File( netsFolderDEGR.getAbsolutePath() + "/" + lang + "_" + getCurrenrtTime() + "_degree_distribution.dat" );
-//
-//		PrintWriter out = new PrintWriter(
-//          new BufferedWriter(
-//            new FileWriter( 
-//              degrFile.getAbsolutePath() 
-//                          ) 
-//                            ) 
-//                  
-//                                         );
-//		
-//		int i = 0;
-//		
-//		Hashtable<Integer,Integer> degrees = new Hashtable<Integer,Integer>();
-//				
-//		int n = ig2.getVertexCount();
-//		Collection cV =  ig2.getVertices();
-//		Iterator<String> it = cV.iterator();
-//		while ( it.hasNext() ) {
-//			String v = it.next();
-//			int degree = ig2.degree( v );
-//			
-//			addDegree( degrees, degree ); 
-//		}
-//		
-//		lbtHIST.nextRecord(  );
-//		
-//		Iterator iter = degrees.keySet().iterator();
-//		while( iter.hasNext() ) {
-//
-//			if ( i != 0 ) out.write( ", " );
-//						
-//			int x = (Integer) iter.next();
-//			int y = degrees.get( x );
-//			
-//			lbtHIST.add( x, y );
-//			
-//			
-//			String point = Math.log( x ) + ", " + Math.log( y );
-//		    out.write( "[" + point + "]" ) ;
-//
-//		    i++;
-//		}
-//		
-//		lbtHIST.flush(getCurrenrtTime());
-//	    
-//		
-//		out.flush();
-//		out.close();
-//		
-//	}
+	/**
+	 * Just the DegreeHistogramm, no division by total number ...
+	 * 
+	 * @param ig2
+	 * @param cal
+	 * @throws IOException
+	 */
+	private static void storeDegreeHistogram(Graph<String, String> ig2, GregorianCalendar cal) throws IOException {
+		
+		File degrFile = new File( netsFolderDEGR.getAbsolutePath() + "/" + lang + "_" + getCurrenrtTime() + "_degree_distribution.dat" );
+
+		PrintWriter out = new PrintWriter(
+          new BufferedWriter(
+            new FileWriter( 
+              degrFile.getAbsolutePath() 
+                          ) 
+                            ) 
+                  
+                                         );
+		
+		int i = 0;
+		
+		Hashtable<Integer,Integer> degrees = new Hashtable<Integer,Integer>();
+				
+		int n = ig2.getVertexCount();
+		Collection cV =  ig2.getVertices();
+		Iterator<String> it = cV.iterator();
+		while ( it.hasNext() ) {
+			String v = it.next();
+			int degree = ig2.degree( v );
+			
+			addDegree( degrees, degree ); 
+		}
+		
+		lbtHIST.nextRecord(  );
+		
+		Iterator iter = degrees.keySet().iterator();
+		while( iter.hasNext() ) {
+
+			if ( i != 0 ) out.write( ", " );
+						
+			int x = (Integer) iter.next();
+			int y = degrees.get( x );
+			
+			lbtHIST.add( x, y );
+			
+			
+			String point = Math.log( x ) + ", " + Math.log( y );
+		    out.write( "[" + point + "]" ) ;
+
+		    i++;
+		}
+		
+		lbtHIST.flush(getCurrenrtTime());
+	    
+		
+		out.flush();
+		out.close();
+		
+	}
 	
 	private static void storeDegreeDistribution(Graph<String, String> ig2, GregorianCalendar cal) throws IOException {
 		
